@@ -1,0 +1,9 @@
+export enum Message {
+  NEXT,
+  UPDATE_PLAYER,
+  SET_PROMPT,
+  SET_RESPONSE,
+  SET_WINNER,
+  // START_ROUND,
+  // RETURN_TO_LOBBY,
+}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      .options {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
+    <script type="text/javascript">
+      const client = new Colyseus.Client("ws://localhost:3002");
+
+      async function connect() {
+        try {
+          const room = await client.joinOrCreate("game");
+
+          room.onStateChange((newState) => {
+            console.log("New state:", newState);
+          });
+
+          room.onMessage("message_type", (message) => {
+            console.log(client.id, "received on", room.name, message);
+          });
+
+          room.onLeave((code) => {
+            console.log("You've been disconnected.");
+          });
+
+          room.onError((code, message) => {
+            console.log(client.id, "couldn't join", room.name);
+          });
+
+          // room.send("type", { direction: "left"});
+        } catch (e) {
+          console.error("Couldn't connect:", e);
+        }
+      }
+
+      connect();
+    </script>
+  </body>
+</html>
