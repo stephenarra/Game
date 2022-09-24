@@ -31,12 +31,9 @@ export class GameRoom extends Room<Game> {
       this.dispatcher.dispatch(new SetPromptCommand(), { client, ...data });
     });
 
-    this.onMessage(
-      Message.SET_RESPONSE,
-      (client, data: { message: string }) => {
-        this.dispatcher.dispatch(new SetResponseCommand(), { client, ...data });
-      }
-    );
+    this.onMessage(Message.SET_RESPONSE, (client, data) => {
+      this.dispatcher.dispatch(new SetResponseCommand(), { client, data });
+    });
 
     this.onMessage(
       Message.UPDATE_PLAYER,

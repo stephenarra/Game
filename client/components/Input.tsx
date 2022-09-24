@@ -11,12 +11,14 @@ type WithTitleProps = {
 };
 
 function withTitle<P>(Component: React.ComponentType<P>) {
-  return (props: P & WithTitleProps) => (
+  const Comp = (props: P & WithTitleProps) => (
     <label className="block my-4">
       <span className="text-gray-700">{props.title}</span>
       <Component {...props} />
     </label>
   );
+  Comp.displayName = "WithTitle";
+  return Comp;
 }
 
 export const Input = withTitle(

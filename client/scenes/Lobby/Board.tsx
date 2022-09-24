@@ -37,6 +37,9 @@ const Lobby = () => {
             </div>
           )}
         </div>
+        <div className="my-2 text-lg text-center text-gray-500">
+          Once everyone’s in, the leader can start the game.
+        </div>
       </div>
     </div>
   );

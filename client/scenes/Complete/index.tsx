@@ -1,18 +1,22 @@
-import Leaderboard from "components/LeaderBoard";
+import Leaderboard from "components/Leaderboard";
 import { useStore, isGameBoardSelector } from "utils/store";
 import CenterLayout from "components/CenterLayout";
 
 const BoardComplete = () => {
   const players = useStore((state) => state.players);
-  // const winner =  useStore((state) => state.winner);
   const returnToLobby = useStore((state) => state.next);
 
   return (
-    <div className="flex flex-col h-screen min-h-full">
-      <Leaderboard players={players} />
-      <button className="block w-full btn btn-primary" onClick={returnToLobby}>
-        Return to Game Lobby
-      </button>
+    <div className="h-full bg-gray-200">
+      <div className="flex flex-col px-4 py-12 sm:px-6 lg:px-8">
+        <Leaderboard players={players} />
+        <button
+          className="block w-full mt-8 btn btn-primary"
+          onClick={returnToLobby}
+        >
+          Return to Game Lobby
+        </button>
+      </div>
     </div>
   );
 };

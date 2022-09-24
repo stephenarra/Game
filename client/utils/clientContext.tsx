@@ -17,6 +17,7 @@ interface ClientContextInterface {
 }
 
 const ROOM_NAME = "game";
+const API_URL = "wss://gif-game-server.fly.dev"; // ws://localhost:3002
 
 const ClientContext = createContext<ClientContextInterface>(
   {} as ClientContextInterface
@@ -24,7 +25,7 @@ const ClientContext = createContext<ClientContextInterface>(
 
 export const ClientProvider = ({ children }: { children: ReactNode }) => {
   const [room, setRoom] = useState<ClientContextInterface["room"]>(undefined);
-  const client = useMemo(() => new Client("ws://localhost:3002"), []);
+  const client = useMemo(() => new Client(API_URL), []);
 
   const output = {
     room,

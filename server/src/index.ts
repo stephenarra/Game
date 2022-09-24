@@ -1,6 +1,7 @@
 import { Server } from "colyseus";
 import { createServer } from "http";
 import express from "express";
+import cors from "cors";
 import { GameRoom } from "./rooms/GameRoom";
 import dotenv from "dotenv";
 dotenv.config();
@@ -10,8 +11,13 @@ import path from "path";
 const port = Number(process.env.PORT) || 3000;
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use("/public", express.static(path.join(__dirname, "../public")));
+
+app.get("/", (req, res) => {
+  res.send({ status: true });
+});
 
 app.get("/health", (req, res) => {
   res.json({ status: true });
@@ -27,7 +33,11 @@ const gameServer = new Server({
   }),
 });
 
+console.log("Listening on port:", port);
 gameServer.listen(port);
+gameServer.onShutdown(() => {
+  console.log("Server Shutdown");
+});
 
 gameServer
   .define("game", GameRoom)

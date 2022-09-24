@@ -8,7 +8,21 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   images: {
-    domains: ["avatars.dicebear.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "avatars.dicebear.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.giphy.com",
+      },
+    ],
+  },
+  experimental: {
+    images: {
+      allowFutureImage: true,
+    },
   },
 };
 

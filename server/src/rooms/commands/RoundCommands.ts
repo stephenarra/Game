@@ -1,10 +1,18 @@
 import { Command } from "@colyseus/command";
 import { Client } from "colyseus";
 import { GameRoom } from "../GameRoom";
+import { Image } from "../schema/Image";
+import { BaseImage } from "../../../../types/Game";
+import { uniqueId } from "lodash";
 
 type Payload = {
   client: Client;
   message: string;
+};
+
+type SetResponsePayload = {
+  client: Client;
+  data: BaseImage;
 };
 
 type SetWinnerPayload = {
@@ -32,9 +40,9 @@ export class SetPromptCommand extends Command<GameRoom, Payload> {
   }
 }
 
-export class SetResponseCommand extends Command<GameRoom, Payload> {
-  execute(data: Payload) {
-    const { client, message } = data;
+export class SetResponseCommand extends Command<GameRoom, SetResponsePayload> {
+  execute(payload: SetResponsePayload) {
+    const { client, data } = payload;
     const activeRound = this.state.rounds[this.state.activeRound];
 
     if (!activeRound) {
@@ -45,7 +53,15 @@ export class SetResponseCommand extends Command<GameRoom, Payload> {
       throw new Error("round leader can't set response");
     }
 
-    activeRound.responses.set(client.sessionId, message);
+    if (activeRound.playerResponses.has(client.sessionId)) {
+      throw new Error("user has already submitted a response");
+    }
+
+    activeRound.playerResponses.add(client.sessionId);
+    activeRound.responses.set(
+      uniqueId("res"),
+      new Image(data, this.state.activeRound, client.sessionId)
+    );
     if (activeRound.responses.size === activeRound.playerCount - 1) {
       activeRound.status = "select_winner";
     }
@@ -65,10 +81,19 @@ export class SetWinnerCommand extends Command<GameRoom, SetWinnerPayload> {
       throw new Error("round leader must set winner.");
     }
 
+    const response = activeRound.responses.get(id);
+
+    // user or response? // response.owner;
     activeRound.winner = id;
     activeRound.status = "complete";
 
-    const winner = this.state.players.get(id);
+    // hack to run filters on images
+    // see: https://github.com/colyseus/schema/issues/102
+    activeRound.responses.forEach((img) => {
+      img["$changes"].touch(0);
+    });
+
+    const winner = this.state.players.get(response.owner);
     winner.points += 1;
 
     if (winner.points >= POINTS_TO_WIN) {

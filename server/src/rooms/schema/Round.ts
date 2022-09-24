@@ -1,5 +1,6 @@
-import { Schema, type, MapSchema } from "@colyseus/schema";
+import { Schema, type, MapSchema, SetSchema } from "@colyseus/schema";
 import { RoundSchema } from "../../../../types/Game";
+import { Image } from "./Image";
 
 export class Round extends Schema implements RoundSchema {
   @type("string")
@@ -14,8 +15,12 @@ export class Round extends Schema implements RoundSchema {
   @type("string")
   prompt: string;
 
-  @type({ map: "string" })
-  responses = new MapSchema<string>();
+  // set of players that have responded
+  @type({ set: "string" })
+  playerResponses = new SetSchema<string>();
+
+  @type({ map: Image })
+  responses = new MapSchema<Image>();
 
   @type("number")
   responseCount: number;

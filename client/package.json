@@ -9,9 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@giphy/js-fetch-api": "^4.4.0",
+    "@giphy/react-components": "^6.2.0",
     "@headlessui/react": "^1.7.2",
     "@heroicons/react": "^2.0.11",
-    "@supabase/supabase-js": "^2.0.0-rc.10",
+    "classnames": "^2.3.2",
     "colyseus.js": "^0.14.13",
     "game-types": "file:../types",
     "lodash": "^4.17.21",
@@ -19,10 +21,13 @@
     "next-transpile-modules": "^9.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-grid-gallery": "^1.0.0",
+    "usehooks-ts": "^2.7.1",
     "ws": "^8.8.1",
     "zustand": "^4.1.1"
   },
   "devDependencies": {
+    "@giphy/js-types": "^4.2.1",
     "@tailwindcss/forms": "^0.5.3",
     "@types/lodash": "^4.14.185",
     "@types/node": "18.7.18",

@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+#__next {
+  @apply h-full;
+}
+
 .btn {
   @apply px-4 py-3 font-bold rounded;
 }
@@ -9,10 +22,16 @@
 .btn-primary {
   @apply text-white bg-blue-500;
   box-shadow: 0px 4px 1px 0px rgb(37 99 235 / var(--tw-bg-opacity));
+  cursor: pointer;
 }
 .btn-primary:hover {
   @apply bg-blue-600;
   box-shadow: 0px 4px 1px 0px rgb(30 64 175 / var(--tw-bg-opacity));
+}
+
+.btn-primary:disabled {
+  @apply text-gray-500 bg-gray-200 shadow-none;
+  cursor: not-allowed;
 }
 
 .btn-white {
@@ -20,7 +39,6 @@
   box-shadow: 0px 4px 1px 0px rgb(243 244 246 / var(--tw-bg-opacity));
 }
 .btn-white:hover {
-  @apply bg-white;
   box-shadow: 0px 4px 1px 0px rgb(243 244 246 / var(--tw-bg-opacity));
 }
 

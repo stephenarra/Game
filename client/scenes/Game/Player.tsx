@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useStore } from "utils/store";
 import CenterLayout from "components/CenterLayout";
 import Input from "components/Input";
+import GifSearch from "components/GifSearch";
+import { pick } from "lodash";
 
 const FullScreenMessage = ({ message }: { message: string }) => (
   <CenterLayout>
@@ -24,19 +26,30 @@ const Response = () => {
   const submitResponse = useStore((state) => state.setResponse);
   const activeRound = useStore((state) => state.rounds[state.activeRound]);
   const sessionId = useStore((state) => state.sessionId);
-  const hasSubmitted = activeRound.responses[sessionId];
+  const hasSubmitted = activeRound.playerResponses.includes(sessionId);
 
-  // response shouldn't be keyed by id, this is a hack.
   if (hasSubmitted) {
     return <FullScreenMessage message="Response Submitted." />;
   }
 
   return (
-    <CenterLayout>
+    <CenterLayout className="flex flex-col">
       <h3 className="mb-1 text-xl font-bold text-gray-900">
         {activeRound.prompt}
       </h3>
-      <Input
+      <GifSearch
+        className="flex-1"
+        placeholder="Choose a gif"
+        onClick={(d) => {
+          const image = {
+            id: d.id as string,
+            title: d.title,
+            ...pick(d.images.original, ["url", "width", "height"]),
+          };
+          submitResponse(image);
+        }}
+      />
+      {/* <Input
         title="Choose a Response"
         value={response}
         onChange={setResponse}
@@ -48,7 +61,7 @@ const Response = () => {
         }}
       >
         Submit
-      </button>
+      </button> */}
     </CenterLayout>
   );
 };

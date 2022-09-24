@@ -1,5 +1,5 @@
 // maintaining two types so the client can used the serialized version
-import { Schema, ArraySchema, MapSchema } from "@colyseus/schema";
+import { Schema, ArraySchema, MapSchema, SetSchema } from "@colyseus/schema";
 
 export interface Player {
   status: "joining" | "ready";
@@ -18,16 +18,18 @@ export interface Round {
   leader: string;
   prompt: string;
   playerCount: number;
-  responses: { [key: string]: string };
+  responses: { [key: string]: Image };
+  playerResponses: string[];
   responseCount: number;
   winner: string;
 }
 
 export interface RoundSchema
   extends Schema,
-    Omit<Round, "status" | "responses"> {
+    Omit<Round, "status" | "responses" | "playerResponses"> {
   status: string;
-  responses: MapSchema<string>;
+  responses: MapSchema<ImageSchema>;
+  playerResponses: SetSchema<string>;
 }
 
 export interface Game {
@@ -48,3 +50,18 @@ export interface GameSchema
   playerList: ArraySchema<string>;
   rounds: ArraySchema<RoundSchema>;
 }
+
+export interface BaseImage {
+  id: string;
+  title: string;
+  url: string;
+  width: number;
+  height: number;
+}
+
+export interface Image extends BaseImage {
+  round: number;
+  owner: string;
+}
+
+export interface ImageSchema extends Schema, Image {}

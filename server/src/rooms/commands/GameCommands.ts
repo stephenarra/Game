@@ -55,10 +55,13 @@ export class NextScreenCommand extends Command<GameRoom, Payload> {
 
     const isGameComplete = this.state.status === "complete";
     if (isGameComplete) {
-      // return to lobby and clear rounds
+      // return to lobby and clear rounds and scores
       this.state.status = "lobby";
       this.state.rounds.clear();
       this.state.activeRound = null;
+      this.state.players.forEach((player) => {
+        player.points = 0;
+      });
       return;
     }
 

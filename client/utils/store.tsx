@@ -1,8 +1,7 @@
 import { createStore, StoreApi, useStore as useZustandStore } from "zustand";
 import { useContext, createContext, useRef, useMemo } from "react";
 import { Message } from "game-types/Messages";
-import { Game } from "game-types/Game";
-
+import { Game, BaseImage } from "game-types/Game";
 import { Room } from "colyseus.js";
 
 interface GameState extends Game {
@@ -11,7 +10,7 @@ interface GameState extends Game {
   next: () => void;
   updatePlayer: (data: { name: string; avatar: string }) => void;
   setPrompt: (data: { message: string }) => void;
-  setResponse: (data: { message: string }) => void;
+  setResponse: (data: BaseImage) => void;
   setWinner: (data: { id: string }) => void;
 }
 
@@ -26,16 +25,16 @@ const createGameStore = (room: Room) => {
     next: () => {
       room.send(Message.NEXT);
     },
-    updatePlayer: (data: { name: string; avatar: string }) => {
+    updatePlayer: (data) => {
       room.send(Message.UPDATE_PLAYER, data);
     },
-    setPrompt: (data: { message: string }) => {
+    setPrompt: (data) => {
       room.send(Message.SET_PROMPT, data);
     },
-    setResponse: (data: { message: string }) => {
+    setResponse: (data) => {
       room.send(Message.SET_RESPONSE, data);
     },
-    setWinner: (data: { player: string }) => {
+    setWinner: (data) => {
       room.send(Message.SET_WINNER, data);
     },
     ...initialState,
