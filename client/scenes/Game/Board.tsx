@@ -23,13 +23,11 @@ const Board = ({ children }: { children: React.ReactNode }) => {
   const players = useStore((state) => state.players);
 
   return (
-    <div className="flex flex-col h-screen min-h-full">
+    <div className="flex flex-col h-screen min-h-full bg-gray-200">
       <div className="flex justify-center py-4">
-        <h3 className="text-xl font-bold text-gray-900">
-          Round: {activeRoundIndex + 1}
-        </h3>
+        <h3 className="text-xl text-gray-500">Round {activeRoundIndex + 1}</h3>
       </div>
-      <div className="flex-grow px-4 py-12 bg-gray-200 sm:px-6 lg:px-8">
+      <div className="flex-grow px-4 py-12 sm:px-6 lg:px-8">
         <div className="w-full h-full">{children}</div>
       </div>
       <div>
@@ -60,11 +58,29 @@ const Prompt = () => {
 
 const Response = () => {
   const activeRound = useStore((state) => state.rounds[state.activeRound]);
+  const players = useStore((state) => state.players);
+  const playerResponses = activeRound.playerResponses;
 
   return (
     <>
       <Title>{activeRound.prompt}</Title>
       <Subtitle>Users are submitting responses</Subtitle>
+      <div>
+        <div className="flex justify-center">
+          {Object.keys(players)
+            .map((id) => ({ ...players[id], id }))
+            .filter((player) => player.id !== activeRound.leader)
+            .map((player) => (
+              <PlayerCard
+                format="compact"
+                key={player.id}
+                name={player.name}
+                avatar={player.avatar}
+                subtitle={playerResponses.includes(player.id) ? "ready" : ""}
+              />
+            ))}
+        </div>
+      </div>
     </>
   );
 };
@@ -81,6 +97,7 @@ const SelectWinner = () => {
 };
 
 const Complete = () => {
+  const activeRound = useStore((state) => state.rounds[state.activeRound]);
   const winner = useStore((state) => {
     const activeRound = state.rounds[state.activeRound];
     const response = activeRound.responses[activeRound.winner];
@@ -97,35 +114,41 @@ const Complete = () => {
   // start countdown on load
   useEffect(() => {
     startCountdown();
-  }, []);
+  }, [startCountdown]);
   useEffect(() => {
     if (count === 0) {
       startRound();
     }
-  }, [count]);
+  }, [startRound, count]);
 
   return (
     <>
-      <Title>Round Complete</Title>
-      {!!winner.player && <Subtitle>{winner.player.name} Wins!</Subtitle>}
-      <Image
-        src={winner.response.url}
-        width={winner.response.width}
-        height={winner.response.height}
-        alt=""
-      />
+      {!!winner.player && <Title>{winner.player.name} Wins!</Title>}
+      <Subtitle>{activeRound.prompt}</Subtitle>
+      <div className="flex justify-center w-full">
+        <Image
+          className="text-center"
+          src={winner.response.url}
+          width={winner.response.width}
+          height={winner.response.height}
+          alt=""
+        />
+      </div>
       <Subtitle>Next round starts in: {count}</Subtitle>
     </>
   );
 };
 
-const withBoard = (Component: React.FunctionComponent) => () =>
-  (
+const withBoard = (Component: React.FunctionComponent) => {
+  const BoardWrapper = () => (
     <Board>
       <Component />
     </Board>
   );
+  return BoardWrapper;
+};
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   Prompt: withBoard(Prompt),
   Response: withBoard(Response),

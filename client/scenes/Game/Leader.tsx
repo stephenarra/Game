@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useStore } from "utils/store";
 import Input from "components/Input";
 import CenterLayout from "components/CenterLayout";
+import FullScreenMessage from "components/FullScreenMessage";
 import ResponseGallery from "components/ResponseGallery";
 
 const Prompt = () => {
@@ -24,7 +25,7 @@ const Prompt = () => {
 };
 
 const Response = () => (
-  <CenterLayout>Users are submitting responses</CenterLayout>
+  <FullScreenMessage message="Users are submitting responses" />
 );
 
 const SelectWinner = () => {
@@ -46,8 +47,11 @@ const SelectWinner = () => {
   );
 };
 
-const Complete = () => <CenterLayout>Complete</CenterLayout>;
+const Complete = () => (
+  <FullScreenMessage message="Please wait for next round to begin." />
+);
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   Prompt,
   Response,

@@ -68,14 +68,22 @@ export class GameRoom extends Room<Game> {
 
   async onLeave(client: Client, consented?: boolean) {
     console.log(client.sessionId, "left!");
-    this.state.players.get(client.sessionId).connected = false;
 
     try {
       if (consented) {
         throw new Error("consented leave");
       }
-      await this.allowReconnection(client, 30);
-      this.state.players.get(client.sessionId).connected = true;
+
+      if (this.state.serverSession === client.sessionId) {
+        let originalStatus = this.state.status;
+        this.state.status = "disconnected";
+        await this.allowReconnection(client, 30);
+        this.state.status = originalStatus;
+      } else {
+        this.state.players.get(client.sessionId).connected = false;
+        await this.allowReconnection(client, 30);
+        this.state.players.get(client.sessionId).connected = true;
+      }
     } catch (e) {
       // time expired, remove the client
       this.dispatcher.dispatch(new RemovePlayerCommand(), { client });
