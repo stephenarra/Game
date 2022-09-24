@@ -5,19 +5,21 @@ import React, {
   useState,
   useMemo,
 } from "react";
+import Router from "next/router";
 import { Client, Room } from "colyseus.js";
 
 interface ClientContextInterface {
   client: Client | undefined;
   room: Room | undefined;
-  connect: () => Promise<Room>;
   join: (roomId: string) => Promise<Room>;
-  reconnect: (roomId: string, sessionId: string) => Promise<Room>;
+  leave: () => void;
   create: () => Promise<Room>;
 }
 
 const ROOM_NAME = "game";
-const API_URL = "wss://gif-game-server.fly.dev"; // ws://localhost:3002
+const API_URL =
+  process.env.NEXT_PUBLIC_SOCKET_URL || "wss://gif-game-server.fly.dev"; // ws://localhost:3002
+const SESSION_KEY = "roomSession";
 
 const ClientContext = createContext<ClientContextInterface>(
   {} as ClientContextInterface
@@ -30,26 +32,14 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
   const output = {
     room,
     client,
-    connect: async () => {
-      const room = await client.joinOrCreate(ROOM_NAME);
-      localStorage.setItem("roomId", room.id);
-      localStorage.setItem("sessionId", room.sessionId);
-      setRoom(room);
-      return room;
-    },
-    // join: async (roomId: string) => {
-    //   const room = await client.joinById(roomId);
-    //   localStorage.setItem("roomId", room.id);
-    //   localStorage.setItem("sessionId", room.sessionId);
-    //   setRoom(room);
-    //   return room;
-    // },
     join: async (roomId: string) => {
       let room: Room;
-      const key = `roomSession${roomId}`;
-      if (localStorage.getItem(key)) {
+      if (localStorage.getItem(SESSION_KEY)) {
         try {
-          room = await client.reconnect(roomId, localStorage.getItem(key));
+          room = await client.reconnect(
+            roomId,
+            localStorage.getItem(SESSION_KEY)
+          );
         } catch (e) {
           // reconnect may not be successful, try to join with new session.
           room = await client.joinById(roomId);
@@ -58,19 +48,23 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
         room = await client.joinById(roomId);
       }
 
-      localStorage.setItem(key, room.sessionId);
-      setRoom(room);
-      return room;
-    },
-    reconnect: async (roomId: string, sessionId: string) => {
-      const room = await client.reconnect(roomId, sessionId);
+      localStorage.setItem(SESSION_KEY, room.sessionId);
       setRoom(room);
       return room;
     },
     create: async () => {
       const room = await client.create(ROOM_NAME, { server: true });
+      localStorage.setItem(SESSION_KEY, room.sessionId);
       setRoom(room);
       return room;
+    },
+    leave: async () => {
+      localStorage.removeItem(SESSION_KEY);
+      if (room?.leave) {
+        await room.leave(true);
+      }
+      setRoom(null);
+      Router.push("/");
     },
   };
 

@@ -8,7 +8,7 @@ interface LayoutProps {
 const CenterLayout = ({ children, className = "" }: LayoutProps) => {
   return (
     <div className="flex items-center justify-center h-full min-h-full px-4 py-4 sm:px-6 lg:px-8">
-      <div className={cx("w-full h-full max-w-md", className)}>{children}</div>
+      <div className={cx("w-full max-w-md", className)}>{children}</div>
     </div>
   );
 };

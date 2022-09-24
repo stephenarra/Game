@@ -1,15 +1,8 @@
 import { useState } from "react";
 import { useStore } from "utils/store";
-import CenterLayout from "components/CenterLayout";
-import Input from "components/Input";
+import FullScreenMessage from "components/FullScreenMessage";
 import GifSearch from "components/GifSearch";
 import { pick } from "lodash";
-
-const FullScreenMessage = ({ message }: { message: string }) => (
-  <CenterLayout>
-    <h3 className="mb-1 text-lg font-semibold text-gray-700">{message}</h3>
-  </CenterLayout>
-);
 
 const Prompt = () => {
   const currentLeader = useStore(
@@ -33,13 +26,13 @@ const Response = () => {
   }
 
   return (
-    <CenterLayout className="flex flex-col">
-      <h3 className="mb-1 text-xl font-bold text-gray-900">
+    <div className="flex flex-col items-center w-full h-full">
+      <h3 className="pt-4 mb-1 text-xl font-bold text-gray-900">
         {activeRound.prompt}
       </h3>
       <GifSearch
-        className="flex-1"
-        placeholder="Choose a gif"
+        className="flex-1 w-full max-w-md"
+        placeholder="Search for a GIF"
         onClick={(d) => {
           const image = {
             id: d.id as string,
@@ -49,28 +42,17 @@ const Response = () => {
           submitResponse(image);
         }}
       />
-      {/* <Input
-        title="Choose a Response"
-        value={response}
-        onChange={setResponse}
-      />
-      <button
-        className="block w-full btn btn-primary"
-        onClick={() => {
-          submitResponse({ message: response });
-        }}
-      >
-        Submit
-      </button> */}
-    </CenterLayout>
+    </div>
   );
 };
 
 const Winner = () => (
   <FullScreenMessage message="Leader is selecting a winner." />
 );
+
 const Complete = () => <FullScreenMessage message="Round Complete." />;
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   Prompt,
   Response,

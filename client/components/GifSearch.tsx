@@ -3,6 +3,7 @@ import { GiphyFetch } from "@giphy/js-fetch-api";
 import { useState, ComponentProps } from "react";
 import { useElementSize } from "usehooks-ts";
 import cx from "classnames";
+import PoweredByGiphyLogo from "./PoweredByGiphyLogo";
 
 // todo: move to api?
 const API_KEY = "zi2N0oFUhUygLk2deyMRhn25zgYwQ0hA";
@@ -15,7 +16,11 @@ interface SearchProps {
   className?: string;
 }
 
-const Search = ({ onClick, placeholder = "", className = "" }: SearchProps) => {
+const GifSearch = ({
+  onClick,
+  placeholder = "",
+  className = "",
+}: SearchProps) => {
   const [search, setSearch] = useState("");
 
   const fetchGifs = async (offset: number) => {
@@ -28,7 +33,10 @@ const Search = ({ onClick, placeholder = "", className = "" }: SearchProps) => {
   return (
     <div
       ref={ref}
-      className={cx("flex flex-col h-full overflow-auto", className)}
+      className={cx(
+        "flex flex-col items-center h-full overflow-auto",
+        className
+      )}
     >
       <input
         type="text"
@@ -49,7 +57,10 @@ const Search = ({ onClick, placeholder = "", className = "" }: SearchProps) => {
           hideAttribution={true}
         />
       </div>
+      <div className="w-24 my-4">
+        <PoweredByGiphyLogo />
+      </div>
     </div>
   );
 };
-export default Search;
+export default GifSearch;
