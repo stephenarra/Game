@@ -1,9 +1,10 @@
 import PlayerCard from "components/PlayerCard";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useStore } from "utils/store";
-import ResponseGallery from "components/ResponseGallery";
+import ResponseGallery, { getImages } from "components/ResponseGallery";
 import Image from "next/future/image";
 import { useCountdown } from "usehooks-ts";
+import useSlideShow from "./useSlideshow";
 
 const Title = ({ children }: { children: React.ReactNode }) => (
   <h3 className="mb-1 text-xl font-bold text-center text-gray-900">
@@ -87,6 +88,34 @@ const Response = () => {
 
 const SelectWinner = () => {
   const activeRound = useStore((state) => state.rounds[state.activeRound]);
+  const images = useMemo(
+    () => getImages(activeRound.responses),
+    [activeRound.responses]
+  );
+  const {
+    image,
+    isAnimating,
+  }: { image: typeof images[0]; isAnimating: boolean } = useSlideShow({
+    images,
+  });
+
+  if (isAnimating) {
+    return (
+      <>
+        <Title>{activeRound.prompt}</Title>
+        <div className="flex justify-center flex-1 w-full">
+          <Image
+            className="w-auto h-full text-center rounded"
+            src={image.src}
+            alt=""
+            width={0}
+            height={0}
+          />
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <Title>{activeRound.prompt}</Title>

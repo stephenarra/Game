@@ -50,7 +50,9 @@ const Winner = () => (
   <FullScreenMessage message="Leader is selecting a winner." />
 );
 
-const Complete = () => <FullScreenMessage message="Round Complete." />;
+const Complete = () => (
+  <FullScreenMessage message="Please wait for next round to begin." />
+);
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
